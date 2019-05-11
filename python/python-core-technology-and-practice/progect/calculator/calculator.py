@@ -19,8 +19,8 @@ class Calculator():
     def __init__(self):
         """Initialize a calculator."""
         # self.simple_pattern = re.compile(r"\d*\s*[\\+-\\*/]\s*\d+")
-        self.simple_pattern = re.compile(r"\d*\s*[*/+-]\s*\d+")
-        self.sign_pattern = re.compile("[*/+-]")
+        self.simple_pattern = re.compile(r"\d+\s*[*/+-]\s*\d+")
+        self.operator_pattern = re.compile("[%*/+-]")
 
     def _check(self, expr):
         if not isinstance(expr, str):
@@ -29,22 +29,26 @@ class Calculator():
         return True if re.match(self.simple_pattern, expr) else False
 
     def _calculate(self, expr):
-        sign = re.findall(self.sign_pattern, expr)[0]
-        a, b = [int(x) for x in expr.split(sign)]
-        if sign == "+":
+        operator = re.findall(self.operator_pattern, expr)[0]
+        a, b = [int(x) for x in expr.split(operator)]
+        if operator == "+":
             return a + b
-        if sign == "-":
+        if operator == "-":
             return a - b
-        if sign == "*":
+        if operator == "*":
             return a * b
-        if sign == "/":
+        if operator == "%":
+            return a % b
+        if operator == "/":
             if b == 0:
                 raise(ZeroDivisionError)
             else:
                 return a // b
 
     def _clean(self, expr):
-        return expr.replace(" ", "")
+        p = re.compile("\s")
+        p.sub(r"", expr)
+        return expr
 
     def calculate(self, expr):
         """try to calculate given expression
@@ -55,11 +59,9 @@ class Calculator():
         :rtype: int
         """
         if not self._check(expr):
-            print("Invalid expression")
-            return
+            return ("Invalid expression")
 
         # expr = self._clean(expr);
-
         return self._calculate(expr)
 
 
@@ -75,15 +77,15 @@ class TestCalculator(unittest.TestCase):
         self.assertFalse(self.calculator._check("a * 1"))
         self.assertFalse(self.calculator._check("a / b"))
 
-    def test_sign(self):
-        self.assertEqual(re.findall(self.calculator.sign_pattern, "1   +1")[0], "+")
-        self.assertEqual(re.findall(self.calculator.sign_pattern, "1 -  1")[0], "-")
-        self.assertEqual(re.findall(self.calculator.sign_pattern, "1 /1")[0], "/")
+    def test_operator(self):
+        self.assertEqual(re.findall(self.calculator.operator_pattern, "1   +1")[0], "+")
+        self.assertEqual(re.findall(self.calculator.operator_pattern, "1 -  1")[0], "-")
+        self.assertEqual(re.findall(self.calculator.operator_pattern, "1 /1")[0], "/")
 
     def test_clean(self):
         self.assertTrue(self.calculator._clean("1 + 1"), "1+1")
         self.assertTrue(self.calculator._clean("1 +      1"), "1+1")
-        self.assertTrue(self.calculator._clean("1     +     1"), "1+1")
+        self.assertTrue(self.calculator._clean("1\t    +     1"), "1+1")
 
     def test_calculate(self):
         self.assertEqual(self.calculator.calculate("1+1"), 2)
@@ -101,7 +103,12 @@ if __name__ == '__main__':
     while True:
         try:
             expr = input(">>> ")
-            print(calculator.calculate(expr))
+
+            if (expr.casefold() in ["quit", "exit"]):
+                break
+
+            result = calculator.calculate(expr)
+            print(result)
         except ZeroDivisionError as e:
             print("divide by zero.")
         except KeyboardInterrupt as e:
