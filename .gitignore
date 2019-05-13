@@ -1,3 +1,9 @@
 *.vscode*
 *__pycache__/*
 *.pyc
+
+# c
+*.o
+
+# java
+*.class
