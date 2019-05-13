@@ -24,7 +24,7 @@ Invalid expression
 >>> exit
 ```
 
-### Description
+### Description for Basic Version
 
 ```text
 Input: a simple math arthimetic expression, which only has two integer operands and one operator between them.
@@ -58,3 +58,9 @@ a, b = expr.split(operator)
 ```
 
 That's all.
+
+## Advanced Version
+
+[advanced_calculator.py](./advanced_calculator.py)
+
+### Description for Advanced Version

@@ -14,6 +14,9 @@ import unittest
 
 import pysnooper
 
+
+__all__ = ["Calculator"]
+
 # todo: simple add, subtract, multiple, divition
 class Calculator():
     def __init__(self):
@@ -26,7 +29,13 @@ class Calculator():
         if not isinstance(expr, str):
             return False
         
-        return True if re.match(self.simple_pattern, expr) else False
+        # return True if re.match(self.simple_pattern, expr) else False
+        hit = re.match(self.simple_pattern, expr)
+        if not hit:
+            return False
+        if len(hit.group()) != len(expr):
+            return False
+        return True
 
     def _calculate(self, expr):
         operator = re.findall(self.operator_pattern, expr)[0]
@@ -47,8 +56,7 @@ class Calculator():
 
     def _clean(self, expr):
         p = re.compile("\s")
-        p.sub(r"", expr)
-        return expr
+        return p.sub(r"", expr)
 
     def calculate(self, expr):
         """try to calculate given expression
@@ -83,9 +91,9 @@ class TestCalculator(unittest.TestCase):
         self.assertEqual(re.findall(self.calculator.operator_pattern, "1 /1")[0], "/")
 
     def test_clean(self):
-        self.assertTrue(self.calculator._clean("1 + 1"), "1+1")
-        self.assertTrue(self.calculator._clean("1 +      1"), "1+1")
-        self.assertTrue(self.calculator._clean("1\t    +     1"), "1+1")
+        self.assertEqual(self.calculator._clean("1 + 1"), "1+1")
+        self.assertEqual(self.calculator._clean("1 +      1"), "1+1")
+        self.assertEqual(self.calculator._clean("1\t    +     1"), "1+1")
 
     def test_calculate(self):
         self.assertEqual(self.calculator.calculate("1+1"), 2)
@@ -96,10 +104,7 @@ class TestCalculator(unittest.TestCase):
             self.calculator.calculate("1/0")
 
 
-if __name__ == '__main__':
-    # unittest.main()
-    calculator = Calculator()
-
+def process(calculator):
     while True:
         try:
             expr = input(">>> ")
@@ -113,3 +118,9 @@ if __name__ == '__main__':
             print("divide by zero.")
         except KeyboardInterrupt as e:
             break 
+
+
+if __name__ == '__main__':
+    # unittest.main()
+    calculator = Calculator()
+    process(calculator)
