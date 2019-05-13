@@ -21,7 +21,6 @@ divide by zero.
 2
 >>> ls
 Invalid expression
->>> app
 >>> exit
 ```
 
