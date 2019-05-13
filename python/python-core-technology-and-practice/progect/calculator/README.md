@@ -39,13 +39,23 @@ For example the given input is "1 + 1", and we want the return value 2.
 First of all, we should check whether the input is valid. Here I use a simple regular expression:
 
 ```py
-import re
-
+# match expression
 pattern = re.compile('\d+\s*[*/+-]\s*\d+')
 ```
 
-Then we can get a valid expression if it match such a pattern. Now just parse it:
+Then we can get a valid expression if it matches such a pattern. Now just parse it:
 
 ```py
 # find operator
+pattern = re.compile('%*/+-')
 ```
+
+Finally we can calculate it:
+
+```py
+# expr = "1 + 1"
+# operator = "+"
+a, b = expr.split(operator)
+```
+
+That's all.
